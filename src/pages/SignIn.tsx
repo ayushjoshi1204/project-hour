@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Clock } from "lucide-react";
+import xyzLogo from "@/assets/xyz-company-logo.png";
 
 const SignIn = () => {
   const [empId, setEmpId] = useState("");
@@ -71,12 +71,12 @@ const SignIn = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-4 text-center">
-          <div className="mx-auto bg-primary text-primary-foreground w-16 h-16 rounded-full flex items-center justify-center">
-            <Clock className="w-8 h-8" />
+          <div className="flex justify-center">
+            <img src={xyzLogo} alt="XYZ Company" className="h-20 w-auto" />
           </div>
-          <CardTitle className="text-3xl font-bold">Timesheet Tracker</CardTitle>
+          <CardTitle className="text-2xl font-bold">Timesheet Management System</CardTitle>
           <CardDescription className="text-base">
-            Enter your Employee ID to access your timesheet
+            XYZ Company - Enter your Employee ID to access your timesheet
           </CardDescription>
         </CardHeader>
         <CardContent>

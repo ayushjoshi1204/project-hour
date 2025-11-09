@@ -151,10 +151,10 @@ const Timesheet = () => {
   const validateTimesheet = async (): Promise<boolean> => {
     const totalHours = calculateTotalHours();
     
-    if (totalHours !== 42.5) {
+    if (totalHours < 42.5) {
       toast({
         title: "Validation Error",
-        description: `Total weekly hours must be exactly 42.5. Current total: ${totalHours}`,
+        description: `Total weekly hours must be at least 42.5. Current total: ${totalHours.toFixed(1)}`,
         variant: "destructive",
       });
       return false;

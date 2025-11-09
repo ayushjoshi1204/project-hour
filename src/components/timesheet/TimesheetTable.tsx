@@ -92,11 +92,17 @@ export const TimesheetTable = ({
 
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="p-4 border-b border-border bg-background">
+        <Button onClick={addRow} variant="default" size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Row
+        </Button>
+      </div>
+      
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="bg-table-header border-b border-border">
-              <th className="px-4 py-3 text-left text-sm font-semibold text-foreground w-12"></th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-foreground min-w-[150px]">
                 Project ID
               </th>
@@ -121,6 +127,7 @@ export const TimesheetTable = ({
               <th className="px-4 py-3 text-left text-sm font-semibold text-foreground min-w-[200px]">
                 Comments
               </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-foreground w-12"></th>
             </tr>
           </thead>
           <tbody>
@@ -129,16 +136,6 @@ export const TimesheetTable = ({
                 key={row.id}
                 className="border-b border-border hover:bg-hover-row transition-colors"
               >
-                <td className="px-4 py-3">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteRow(row.id)}
-                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </td>
                 <td className="px-4 py-3">
                   <Select
                     value={row.projectId}
@@ -196,6 +193,16 @@ export const TimesheetTable = ({
                     placeholder="Add comments"
                   />
                 </td>
+                <td className="px-4 py-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => deleteRow(row.id)}
+                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </td>
               </tr>
             ))}
             <tr className="bg-table-header font-semibold">
@@ -215,16 +222,10 @@ export const TimesheetTable = ({
                 {rows.reduce((sum, row) => sum + getRowTotal(row), 0).toFixed(1)}
               </td>
               <td className="px-4 py-3"></td>
+              <td className="px-4 py-3"></td>
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <div className="p-4 border-t border-border bg-background">
-        <Button onClick={addRow} variant="outline" className="w-full">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Row
-        </Button>
       </div>
     </div>
   );

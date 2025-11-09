@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { format, addWeeks, endOfWeek } from "date-fns";
+import xyzLogo from "@/assets/xyz-company-logo.png";
 
 interface TimesheetHeaderProps {
   empId: string;
@@ -29,7 +30,13 @@ export const TimesheetHeader = ({
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Timesheet Tracker</h1>
+        <div className="flex items-center gap-4">
+          <img src={xyzLogo} alt="XYZ Company" className="h-12 w-auto" />
+          <div className="border-l border-border pl-4">
+            <h1 className="text-2xl font-bold text-foreground">Timesheet Management System</h1>
+            <p className="text-sm text-muted-foreground">XYZ Company</p>
+          </div>
+        </div>
         <Button variant="outline" size="sm" onClick={onSignOut}>
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
@@ -54,7 +61,7 @@ export const TimesheetHeader = ({
         <div className="space-y-2">
           <Label className="text-sm font-medium text-muted-foreground">Total Hours</Label>
           <div className={`rounded-md px-4 py-2.5 font-bold text-lg ${
-            totalHours === 42.5 ? "bg-success text-success-foreground" : "bg-destructive/10 text-destructive"
+            totalHours >= 42.5 ? "bg-success text-success-foreground" : "bg-destructive/10 text-destructive"
           }`}>
             {totalHours.toFixed(1)} / 42.5
           </div>
@@ -89,7 +96,7 @@ export const TimesheetHeader = ({
 
         <Button
           onClick={onSubmit}
-          disabled={isLoading || totalHours !== 42.5}
+          disabled={isLoading || totalHours < 42.5}
           size="lg"
           className="min-w-[120px]"
         >
