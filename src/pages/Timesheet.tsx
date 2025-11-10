@@ -46,48 +46,18 @@ const Timesheet = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/");
-        return;
-      }
+    const storedEmpId = sessionStorage.getItem("empId");
+    const storedEmpName = sessionStorage.getItem("empName");
 
-      // Load employee data for authenticated user
-      const { data: employee, error } = await supabase
-        .from("employees")
-        .select("emp_id, emp_name")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+    if (!storedEmpId || !storedEmpName) {
+      navigate("/");
+      return;
+    }
 
-      if (error || !employee) {
-        toast({
-          title: "Error",
-          description: "Employee record not found",
-          variant: "destructive",
-        });
-        await supabase.auth.signOut();
-        navigate("/");
-        return;
-      }
-
-      setEmpId(employee.emp_id);
-      setEmpName(employee.emp_name);
-      loadProjects();
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") {
-        navigate("/");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, toast]);
+    setEmpId(storedEmpId);
+    setEmpName(storedEmpName);
+    loadProjects();
+  }, [navigate]);
 
   useEffect(() => {
     if (empId) {
@@ -320,8 +290,8 @@ const Timesheet = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
+  const handleSignOut = () => {
+    sessionStorage.clear();
     navigate("/");
   };
 
