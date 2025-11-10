@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { TimesheetRow, Project } from "@/pages/Timesheet";
 import { format, addDays, eachDayOfInterval, endOfWeek } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 interface TimesheetTableProps {
   rows: TimesheetRow[];
@@ -24,6 +25,8 @@ export const TimesheetTable = ({
   projects,
   currentWeekStart,
 }: TimesheetTableProps) => {
+  const { toast } = useToast();
+  
   const weekDays = eachDayOfInterval({
     start: currentWeekStart,
     end: endOfWeek(currentWeekStart, { weekStartsOn: 1 }),
@@ -69,6 +72,26 @@ export const TimesheetTable = ({
 
   const updateHours = (rowId: string, date: string, value: string) => {
     const hours = parseFloat(value) || 0;
+    
+    // Validate hours
+    if (hours < 0) {
+      toast({
+        title: "Validation Error",
+        description: "Hours cannot be negative",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (hours > 24) {
+      toast({
+        title: "Validation Error",
+        description: "Hours cannot exceed 24 per day",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setRows(
       rows.map((row) => {
         if (row.id === rowId) {
@@ -163,8 +186,20 @@ export const TimesheetTable = ({
                 <td className="px-4 py-3">
                   <Input
                     value={row.activity}
-                    onChange={(e) => updateRow(row.id, "activity", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 200) {
+                        updateRow(row.id, "activity", value);
+                      } else {
+                        toast({
+                          title: "Validation Error",
+                          description: "Activity must be less than 200 characters",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
                     placeholder="Activity"
+                    maxLength={200}
                   />
                 </td>
                 {weekDays.map((day) => {
@@ -189,8 +224,20 @@ export const TimesheetTable = ({
                 <td className="px-4 py-3">
                   <Input
                     value={row.comments}
-                    onChange={(e) => updateRow(row.id, "comments", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 500) {
+                        updateRow(row.id, "comments", value);
+                      } else {
+                        toast({
+                          title: "Validation Error",
+                          description: "Comments must be less than 500 characters",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
                     placeholder="Add comments"
+                    maxLength={500}
                   />
                 </td>
                 <td className="px-4 py-3">

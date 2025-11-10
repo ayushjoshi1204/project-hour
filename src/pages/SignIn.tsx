@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import xyzLogo from "@/assets/xyz-company-logo.png";
+import { signInSchema, signUpSchema } from "@/lib/validations";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -39,10 +40,19 @@ const SignIn = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email.trim() || !password.trim() || !empId.trim() || !empName.trim()) {
+    // Validate input data
+    const validation = signUpSchema.safeParse({
+      email: email.trim(),
+      password: password.trim(),
+      empId: empId.trim(),
+      empName: empName.trim(),
+    });
+
+    if (!validation.success) {
+      const errors = validation.error.errors.map(err => err.message).join(". ");
       toast({
-        title: "Error",
-        description: "Please fill in all fields",
+        title: "Validation Error",
+        description: errors,
         variant: "destructive",
       });
       return;
@@ -51,11 +61,13 @@ const SignIn = () => {
     setIsLoading(true);
 
     try {
+      const validatedData = validation.data;
+      
       // Check if employee ID already exists
       const { data: existingEmp } = await supabase
         .from("employees")
         .select("emp_id")
-        .eq("emp_id", empId.trim())
+        .eq("emp_id", validatedData.empId)
         .maybeSingle();
 
       if (existingEmp) {
@@ -70,8 +82,8 @@ const SignIn = () => {
 
       // Sign up the user
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: email.trim(),
-        password: password.trim(),
+        email: validatedData.email,
+        password: validatedData.password,
         options: {
           emailRedirectTo: `${window.location.origin}/`,
         }
@@ -87,8 +99,8 @@ const SignIn = () => {
       const { error: empError } = await supabase
         .from("employees")
         .insert({
-          emp_id: empId.trim().toUpperCase(),
-          emp_name: empName.trim(),
+          emp_id: validatedData.empId,
+          emp_name: validatedData.empName,
           user_id: authData.user.id
         });
 
@@ -125,10 +137,17 @@ const SignIn = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email.trim() || !password.trim()) {
+    // Validate input data
+    const validation = signInSchema.safeParse({
+      email: email.trim(),
+      password: password.trim(),
+    });
+
+    if (!validation.success) {
+      const errors = validation.error.errors.map(err => err.message).join(". ");
       toast({
-        title: "Error",
-        description: "Please enter your email and password",
+        title: "Validation Error",
+        description: errors,
         variant: "destructive",
       });
       return;
@@ -137,9 +156,10 @@ const SignIn = () => {
     setIsLoading(true);
 
     try {
+      const validatedData = validation.data;
       const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password.trim(),
+        email: validatedData.email,
+        password: validatedData.password,
       });
 
       if (error) throw error;
